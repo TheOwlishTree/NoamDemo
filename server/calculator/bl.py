@@ -1,6 +1,7 @@
 from enum import Enum
 from fastapi import HTTPException
 
+
 async def addition(x, y, *args, **kwargs):
     return float(x) + float(y)
 

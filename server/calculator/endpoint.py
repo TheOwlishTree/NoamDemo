@@ -1,4 +1,6 @@
-import fastapi
+"""
+Since i did not complete
+"""
 from fastapi import APIRouter, HTTPException
 from server.calculator.bl import addition, substraction, division, multiplication
 from server.calculator.model import Equation
@@ -9,10 +11,30 @@ calc_router = APIRouter()
 
 @calc_router.post("/")
 async def calc_post(equation: Equation):
-    # easy mode
-    # return eval(equation)
     try:
-        eq = equation.equation
+        if equation.operator == "+" :
+            return await addition(equation.num_1, equation.num_2)
+
+        elif equation.operator == "-":
+            return await substraction(equation.num_1, equation.num_2)
+
+        elif equation.operator == "*":
+            return await multiplication(equation.num_1, equation.num_2)
+
+        elif equation.operator == "/":
+            return await division(equation.num_1, equation.num_2)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid Operation. You're allow to use only +, -, *, /")
+    except HTTPException as e:
+        log.warning(f"An error occured. status code = {e.status_code}, message={e.detail}, request={equation}")
+        raise
+
+
+@calc_router.get("/")
+async def calc_get(eq: str):
+    try:
+        # easy mode
+        # return eval(equation)
         if "+" in eq:
             eq = eq.split("+")
             return await addition(eq[0], eq[1])
@@ -31,10 +53,7 @@ async def calc_post(equation: Equation):
         else:
             raise HTTPException(status_code=400, detail="Invalid Operation. You're allow to use only +, -, *, /")
     except HTTPException as e:
-        log.warning(f"An error occured. status code = {e.status_code}, message={e.detail}")
+        log.warning(f"An error occured. status code = {e.status_code}, message={e.detail}, request={eq}")
         raise
 
 
-calc_router.get("/}")
-async def calc_get(eq: str):
-    ...
